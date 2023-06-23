@@ -26,11 +26,22 @@ async function run() {
     
     app.post('/users',async(req,res)=>{
         const user = req.body;
-        const result = await usersCollection.insertOne(user);
-        res.send(result);
+        const filter = {email: user?.email};
+        const oldUser = await usersCollection.findOne(filter);
+        if(!oldUser) {
+          const result = await usersCollection.insertOne(user);
+          res.send(result);
+        }else{
+          res.status(400).json({message: 'User already exists'});
+        }
     }) 
 } finally {
     
   }
 }
 run().catch(console.dir);
+app.get('/',async(req,res) =>{
+  res.send('Mens Parlour Server running');
+})
+
+app.listen(port,()=> console.log(`Mens Parlour Server running on ${port}`))
