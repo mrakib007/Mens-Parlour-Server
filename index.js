@@ -35,6 +35,19 @@ async function run() {
           res.status(400).json({message: 'User already exists'});
         }
     }) 
+
+    app.get('/users',async(req,res)=>{
+      const query = {};
+      const users = await usersCollection.find(query).toArray();
+      res.send(users);
+    });
+
+    app.get('users/admin/:email',async(req,res)=>{
+      const email = req.params.email;
+      const query = {email};
+      const user = await usersCollection.findOne(query);
+      res.send({isAdmin: user?.role === 'admin'});
+    })
 } finally {
     
   }
