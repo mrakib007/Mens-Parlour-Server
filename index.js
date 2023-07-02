@@ -24,6 +24,17 @@ async function run() {
   try {
     const usersCollection = client.db('mensParlour').collection('users');
     
+    const verifyAdmin = async (req,res,next) =>{
+      req.decoded.email;
+      const decodedEmail = req.decoded.email;
+      const query = {email: decodedEmail};
+      const user = await usersCollection.findOne(query);
+      if(user?.role !== 'admin'){
+        return res.status(403).send({message: 'forbidden access'});
+      }
+      next();
+    }
+    
     app.post('/users',async(req,res)=>{
         const user = req.body;
         const filter = {email: user?.email};
